@@ -1,0 +1,13 @@
+{
+  "name": "hue-bridge-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server for Hue Bridge API calls",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "dev": "node proxy-server.js"
+  },
+  "keywords": ["hue", "bridge", "proxy"],
+  "author": "",
+  "license": "ISC"
+}

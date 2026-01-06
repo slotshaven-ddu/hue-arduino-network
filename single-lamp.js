@@ -1,5 +1,8 @@
-// Bridge ip-adresse. Find den fx i hue app'en
-var url = '192.168.50.206'; // skift til din egen Hue hubs IP-adresse. Denne sidder i lokale 73
+// Proxy server URL (runs locally, bypasses CORS issues)
+var proxyUrl = 'http://localhost:3000/proxy';
+
+// Bridge ip-adresse (used by proxy server, no longer directly accessed from browser)
+var hueHubIp = '192.168.50.206'; // skift til din egen Hue hubs IP-adresse. Denne sidder i lokale 73
 
 // Fælles brugernavn
 var username = '41oxODjOX9EsuUQo5KgwbglIOZQxXIItIOAmJdV7'; // Lav dit eget brugernavn til Hue API'et
@@ -11,31 +14,32 @@ function setup() {
     createCanvas(500,400);
     resultDiv = createDiv('Hub response'); // a div for the Hue hub's responses
     resultDiv.position(10, 140); // position it
+    
     dimmer = createSlider(1, 254, 127) // createslider(min, max, default,step)
-    dimmer.position(10, 10); // position it
+    dimmer.position(10, 30); // position it
     dimmer.mouseReleased(changeBrightness); // mouseReleased callback function
     
     temper = createSlider(153, 500, 250) // a slider to dim one light
-    temper.position(10, 40); // position it
+    temper.position(10, 60); // position it
     temper.mouseReleased(changeTemperature); // mouseReleased callback function
 
     breather = createButton("Breathe") // a slider to dim one light
-    breather.position(10, 70); // position it
+    breather.position(10, 90); // position it
     breather.mouseReleased(breathe); // mouseReleased callback function
 
-    text("Lysstyrke", dimmer.x * 2 + dimmer.width, 14);
-    text("Temperatur", temper.x * 2 + temper.width, 44);
+    text("Lysstyrke", dimmer.x * 2 + dimmer.width, 36);
+    text("Temperatur", temper.x * 2 + temper.width, 66);
     textSize(144);
-    text(lightNumber, 300, 100);
+    text(lightNumber, 300, 120);
     connect(); // connect to Hue hub; it will show all light states
 }
 
 /*
-this function makes the HTTP GET call to get the light data:
-HTTP GET http://your.hue.hub.address/api/username/lights/
+this function makes the HTTP GET call to get the light data via the proxy:
+HTTP GET http://localhost:3000/proxy/api/username/lights/
 */
 function connect() {
-    url = "http://" + url + '/api/' + username + '/lights/';
+    var url = proxyUrl + '/api/' + username + '/lights/';
     httpDo(url, 'GET', getLights);
 }
 
@@ -76,10 +80,9 @@ function breathe() {
     setLight(lightNumber, lightState);
 }
 
-
 /*
-this function makes an HTTP PUT call to change the properties of the lights:
-HTTP PUT http://your.hue.hub.address/api/username/lights/lightNumber/state/
+this function makes an HTTP PUT call to change the properties of the lights via proxy:
+HTTP PUT http://localhost:3000/proxy/api/username/lights/lightNumber/state/
 and the body has the light state:
 {
   on: true/false,
@@ -87,7 +90,7 @@ and the body has the light state:
 }
 */
 function setLight(whichLight, data) {
-    var path = url + whichLight + '/state/';
+    var path = proxyUrl + '/api/' + username + '/lights/' + whichLight + '/state/';
 
     var content = JSON.stringify(data); // convert JSON obj to string
     httpDo(path, 'PUT', content, 'text', getLights); //HTTP PUT the change
