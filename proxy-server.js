@@ -1,3 +1,16 @@
+// THis script sets up two servers by means of node.js:
+// 1. A static file server to serve frontend content
+// 2. A proxy server to forward API requests to a Hue Bridge, bypassing CORS restrictions
+
+// Static File Server   
+var express = require('express');              // include the express library
+var webserver = express();                               // create a server using express
+webserver.listen(8080);                        // listen for HTTP
+webserver.use('/',express.static('client'));   // set a static file directory
+console.log('Now listening on port 8080 for static files');
+
+// ----------------------------------------------------
+
 // Proxy server for Hue Bridge API calls
 // This server acts as a middleware between the frontend and the Hue bridge
 // to bypass browser CORS (Cross-Origin Resource Sharing) restrictions
