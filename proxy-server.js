@@ -2,6 +2,8 @@
 // 1. A static file server to serve frontend content
 // 2. A proxy server to forward API requests to a Hue Bridge, bypassing CORS restrictions
 
+// ----------------------------------------------------
+
 // Static File Server   
 var express = require('express');              // include the express library
 var webserver = express();                               // create a server using express
